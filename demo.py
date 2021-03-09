@@ -43,7 +43,7 @@ inp_handle = io.TextIOWrapper(inp_byte)
 #  a list of elements for each line of the file.
 #
 
-inp_reader = csv.reader(inp_handle)
+inp_reader = csv.DictReader(inp_handle)
 
 #
 #  Loop through the file and build an odd dictionary just 
@@ -57,14 +57,10 @@ codes = {}
 
 for rec in inp_reader:
 
-    #  Skip the first line because it's a header
-
-    if inp_reader.line_num == 1:
-        continue
+    #  Get fields from this record
     
-    #  Use a tuple to extract the fields from the list
-
-    (name,code) = rec
+    name = rec['country']
+    code = rec['code']
     
     #  Some countries with long official names are 
     #  stored like this "KOREA, REPUBLIC OF". Convert 
@@ -78,7 +74,7 @@ for rec in inp_reader:
     #  Make a tuple with the length of the name and
     #  the country code. It will be the key.
 
-    key = (len(name),code)
+    key = ( len(name), code )
 
     #  Store the entry in the dictionary
 
@@ -86,46 +82,35 @@ for rec in inp_reader:
 
 inp_handle.close()
 
+#%%
 #
-#  All done reading the data. Now write it out as a new
-#  CSV file.
-#
-
-out_handle = open(outname,'w',newline='')
-out_writer = csv.writer(out_handle)
-
-#
-#  Write a header row with names for the columns
-#
-
-out_writer.writerow(['len','code','name'])
-
+#  All done reading the data. Now sort it and write it out.
 #
 #  Sort the entries by the tuples. That will cause all 
 #  the short names to be listed first, and within a group 
 #  that has the same length, the countries will be sorted 
 #  alphabetically by code.
 #
-#  This is a weird example but it illustrates a VERY 
-#  powerful feature of sorted(): it does a hierarchical 
-#  sort automatically. That is, it groups based on the 
-#  first element in the tuple, then groups by the second 
-#  element, etc.
-#
-#  To write out the row, use list() to turn the key into
-#  a list and then append the name. Also, the Vatican is 
-#  listed twice with two slightly different names. Omit 
-#  one just to illustrate the continue statement.
+#  Also, the Vatican is listed twice with two slightly 
+#  different names. Omit one just to illustrate the 
+#  continue statement.
 #
 
 for key in sorted(codes):
 
-    if key == (29,'VA'):
-        print("Omitting a duplicate code:")
-        print("   ",key,':',codes[key])
-        continue
+    #  If we're looking at the 29-character version of the 
+    #  Vatican's name, skip it by using the continue statement 
+    #  to go onto the next key without executing the rest of 
+    #  the loop.
     
-    name = codes[key]
-    out_writer.writerow(list(key)+[name])
+    if key == (29,'VA'):
+        continue
 
-out_handle.close()
+    #  OK, write this one, converting the name to title case
+    #  along the way.
+    
+    name = codes[key].title()
+    (length,code) = key    
+    
+    print( f"{length:2d}: {name} ({code})")
+
