@@ -2,7 +2,7 @@
 
 ### Summary
 
-This exercise focuses on techniques that are useful for working with large zip files of data in CSV format.
+This exercise focuses on techniques that are useful for working with large datasets stored in CSV format within zipped archives.
 
 ### Input Data
 
@@ -68,13 +68,13 @@ A script called **pecan.py** that goes through the steps below to produce a sort
 
    1. Set the tuple `(mo,dy,hr)` to `hour` to pull out the components of the `hour` tuple and store them in `mo`, `dy`, and `hr`.
 
-   1. Call `out_writer.writerow()` on the list `[mo,dy,hr,avg]` to write the results to the output file in CSV format.
+   1. Call `out_writer.writerow()` on the list `[mo,dy,hr,avg]` to write the results to the output file in CSV format. The month, day, and hour organization would be very convenient for joining on temperature and weather data later for statistical analysis of the determinants of electricity demand.
 
    1. Append `avg` to the `averages` list.
 
 **D. Summarizing usage volatility**
 
-1. An important feature of electricity consumption is that it has sharp spikes: that is, it has a small number of very high values. To see this, we'll look at some percentiles for this data. Set `pctiles` to a list of the following five percentiles: 1, 25, 50, 75, 99.
+1. An important feature of electricity consumption is that it has sharp spikes: that is, it has a small number of very high values. To see this, we'll look at some percentiles for this data. Set `pctiles` to a list of the following percentiles: 1, 5, 10, 25, 50, 75, 90, 95, 99.
 
 1. Now set `pctvals` to the result of calling `np.percentile()` on the arguments `averages` and `pctiles`. That will calculate the average usage at each percentile cutoff.
 
@@ -82,7 +82,7 @@ A script called **pecan.py** that goes through the steps below to produce a sort
 
 **E. Updating results.md**
 
-1. Edit the Markdown file `results.md` and replace the `TBD` placeholder with a short statement that uses the percentile information to describe electricity use briefly. Don't just say "X percentile is Y". Aim for something more like "half the time it is between X and Y" and so on.
+1. Edit the Markdown file `results.md` and replace the `TBD` placeholders with answers based on your percentile results.
 
 ### Submitting
 
