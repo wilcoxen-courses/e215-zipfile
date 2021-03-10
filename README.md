@@ -10,13 +10,13 @@ The input data is a file called **id114_2014.zip** that will need to be download
 
 The zip file contains a single large CSV file called **id114_2014.csv**. It contains data from the Pecan Street Project, a research project in Austin, Texas, that collects high resolution data on household electricity consumption. This file particular file is the data for household 114 in 2014.
 
-The file has one record for every minute (around 525,600 in all). Each record contains electricity use for up to 67 circuits in the house, though not all are used for this particular household. In this exercise we'll only use two of the fields: the timestamp for the record, `localminute`, which shows the date and time of the data in Austin's local time zone, and the household's total usage, `use`, in kilowatts (kW). The timestamp is the second field in each record and usage is the third field. If you'd like to see what the records in the CSV file look like without unzipping the file, see **firstlines.csv** in the Google Drive folder. It has the file's first 10 lines.
+The file has one record for every minute (around 525,600 in all). Each record contains electricity use for up to 67 circuits in the house, though not all are used for this particular household. In this exercise we'll only use two of the fields: the timestamp for the record, `localminute`, which shows the date and time of the data in Austin's local time zone, and the household's total usage, `use`, in kilowatts (kW). The timestamp is the second field in each record and the usage is the third field. If you'd like to see what the records in the CSV file look like without unzipping the file, see **firstlines.csv** in the Google Drive folder: it has the file's first 10 lines.
 
 If you want to run the `demo.py` script for this exercise, you'll also need to download **demo.zip**. It has data on ISO country codes but it isn't necessary for the actual assignment.
 
 ### Deliverables
 
-A script called **pecan.py** that goes through the steps below to produce a sorted file of average hourly usage called `usage.csv`, and an updated version of the Markdown file **results.md**. Note that `usage.csv` itself is not a deliverable and will not be uploaded to GitHub when you push your repository: the .gitignore file in the directory tells GitHub not to upload zip or csv files.
+A script called **pecan.py** that goes through the steps below to produce a sorted file of average hourly usage data called `usage.csv`, and an updated version of the Markdown file **results.md**. Note that `usage.csv` itself is not a deliverable and will not be uploaded to GitHub when you push your repository: the .gitignore file in the directory tells GitHub not to upload zip or csv files. I'll build a copy by running your script.
 
 ### Instructions
 
@@ -24,11 +24,11 @@ A script called **pecan.py** that goes through the steps below to produce a sort
 
 1. Import the following modules: `csv`, `io`, and `zipfile`.
 
-1. Import the `numpy` module using `import numpy as np`.
+1. Import the `numpy` module as `np`.
 
 1. Import `defaultdict` from module `collections`.
 
-1. See `demo.py` for an example showing how to open a CSV file within a zip archive. There are three steps: (1) using `zipfile.ZipFile()` to set up a zip object for working with the archive as a whole; (2) using that object's `open()` call to open file `id114_2014.csv` within the archive; and (3) a call to `io.TextIOWrapper()` to translate the way the data is stored in the file (as a sequence of bytes) into Python's internal way of representing strings. The last step is not necessary when using the standard `open()` function because `open()` does it automatically for text files.
+1. Open the CSV file within the zip archive following the process shown in `demo.py`. There are three steps: (1) using `zipfile.ZipFile()` to set up a zip object for working with the archive as a whole; (2) using that object's `open()` call to open file `id114_2014.csv` within the archive in binary (bytes) mode; and (3) using a call to `io.TextIOWrapper()` to handle character encoding by converting the bytes into strings.
 
 1. Set `inp_reader` to the result of calling `csv.DictReader()` on `inp_handle`.
 
@@ -48,7 +48,7 @@ A script called **pecan.py** that goes through the steps below to produce a sort
 
    1. Now we'll take apart the timestamp in order to build a key that will allow the data to be grouped by hour and later sorted correctly. Split `ts` on spaces and call the pieces `date` and `time`. A convenient way to do that is to set the tuple `(date,time)` to the result of the `split()` function. Then split `date` using `"/"` and call the pieces `mo`,`dy`, and `yr`. Finally, split `time` into `hr` and `mi` using `":"`.
 
-   1. Create a tuple called `hour` that consists of `int(mo)`, `int(dy)` and `int(hr)`. It will represent the hour within the year (the key is the month, then the day of the month, and then the hour of the day).
+   1. Create a tuple called `hour` that consists of `int(mo)`, `int(dy)` and `int(hr)`. It uniquely identifies the hour within the year.
 
    1. Append `use` to the value of `hourly` for key `hour`.
 
@@ -78,7 +78,7 @@ A script called **pecan.py** that goes through the steps below to produce a sort
 
 1. Now set `pctvals` to the result of calling `np.percentile()` on the arguments `averages` and `pctiles`. That will calculate the average usage at each percentile cutoff.
 
-1. Use the tuple `(pct,kw)` to loop over the result of calling the `zip()` function on arguments `pctiles` and `pctvals`. The `zip()` function creates a list of tuples by pairing the corresponding elements of the input lists. Within the loop call `print()` on the string `f"{pct:2d} %: {val:4.3f} kW"`. The `:2d` says that `pct` should be printed as an integer (`d`) using 2 spaces; it will right-align the percentages even though the first one is only 1 digit, The `4.3f` says that `val` should be printed using 4 digits total, of which 3 should be to the right of the decimal point; it has the effect of lining up all the usages. If all goes well, the result should be a nicely formatted table.
+1. Use the tuple `(pct,kw)` to loop over the result of calling the `zip()` function on arguments `pctiles` and `pctvals`. The `zip()` function creates a list of tuples by pairing the corresponding elements of the input lists. Within the loop call `print()` on the string `f"{pct:2d} %: {val:4.3f} kW"`. The `:2d` says that `pct` should be printed as an integer (`d`) using 2 spaces; it will right-align the percentages even though the first one is only one digit. The `4.3f` says that `val` should be printed using 4 digits total, of which 3 should be to the right of the decimal point; it has the effect of lining up all the usages. If all goes well, the result should be a nicely formatted table.
 
 **E. Updating results.md**
 
@@ -90,7 +90,7 @@ Once you're happy with everything and have committed all of the changes to your 
 
 ### Tips
 
-+ It's handy to open the output file *before* reading the whole input file so the script will crash immediately if opening the output file fails. A common cause of open failures is having the last output file open in Excel and then trying to rerun the script. Excel locks the file to prevent other applications from using it at the same time, and that will cause the script to crash with a permission denied error. If you open the output file *after* processing the input file you may end up waiting a long time only to have the script crash.
++ It's handy to open the output file *before* reading the whole input file so the script will crash immediately if opening the output file fails. A common cause of open failures is having the last output file open in Excel and then trying to rerun the script. Excel locks the file to prevent other applications from using it at the same time, and that will cause the script to crash with a permission denied error. If your script opens the output file *after* processing the input file you may end up waiting a long time for the input processing to finish only to have the script crash at the end.
 
 + There are many other ways to translate timestamp strings into numerical values beside using `split()` repeatedly. In this case, however, `split()` is substantially faster than most of the alternatives. That matters because this file is only one small part of a large dataset with multiple years of data and hundreds of households.
 
