@@ -78,7 +78,7 @@ A script called **pecan.py** that goes through the steps below to produce a sort
 
 1. Now set `pctvals` to the result of calling `np.percentile()` on the arguments `averages` and `pctiles`. That will calculate the average usage at each percentile cutoff.
 
-1. Use the tuple `(pct,kw)` to loop over the result of calling the `zip()` function on arguments `pctiles` and `pctvals`. The `zip()` function creates a list of tuples by pairing the corresponding elements of the input lists. Within the loop call `print()` on the string `f"{pct:2d} %: {val:4.3f} kW"`. The `:2d` says that `pct` should be printed as an integer (`d`) using 2 spaces; it will right-align the percentages even though the first one is only one digit. The `4.3f` says that `val` should be printed using 4 digits total, of which 3 should be to the right of the decimal point; it has the effect of lining up all the usages. If all goes well, the result should be a nicely formatted table.
+1. Use the tuple `(pct,val)` to loop over the result of calling the `zip()` function on arguments `pctiles` and `pctvals`. The `zip()` function creates a list of tuples by pairing the corresponding elements of the input lists. Within the loop call `print()` on the string `f"{pct:2d} %: {val:4.3f} kW"`. The `:2d` says that `pct` should be printed as an integer (`d`) using 2 spaces; it will right-align the percentages even though the first one is only one digit. The `4.3f` says that `val` should be printed using 4 digits total, of which 3 should be to the right of the decimal point; it has the effect of lining up all the usages. If all goes well, the result should be a nicely formatted table.
 
 **E. Updating results.md**
 
